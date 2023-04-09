@@ -35,7 +35,9 @@
                     <div class="collapse navbar-collapse" id="navbarSupportedContent">
                         <ul class="navbar-nav me-auto mb-2 mb-lg-0">
                             <li class="nav-item">
-                                <a class="nav-link" v-bind:href="baseURL+'/dashboard/newdata' ">Add New</a>
+                                <a class="nav-link" v-bind:href="baseURL+'/dashboard/newdata' "
+                                    >Add New</a
+                                >
                             </li>
                         </ul>
 
@@ -72,14 +74,30 @@
                 </div>
             </nav>
             <div class="container-fluid">
-                <div class="card my-4" v-for="item in alldata">
-                    <div class="card-body" >
-                        <div class="d-flex justify-content-between">
-                            <div class="">{{item.heading}}</div>
-                            <div class="me-3">
-                                <a v-bind:href="baseURL+'/dashboard/checkdata/'+item.id "> 
-                                    <i class="bi bi-arrow-right-circle-fill" ></i>
-                                </a>
+                <div v-if="alldata.length > 0">
+                    <div class="card my-4" v-for="item in alldata">
+                        <div class="card-body">
+                            <div class="d-flex justify-content-between">
+                                <div class="">{{ item.heading }}</div>
+                                <div class="me-3">
+                                    <a v-bind:href="baseURL+'/dashboard/checkdata/'+item.id ">
+                                        <i class="bi bi-arrow-right-circle-fill"></i>
+                                    </a>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div v-else>
+                    <div class="card my-4">
+                        <div class="card-body">
+                            <div class="d-flex justify-content-between">
+                                <div class="">
+                                    No data Avaliable ,
+                                    <a v-bind:href="baseURL+'/dashboard/newdata' ">
+                                        Click here to add new data
+                                    </a>
+                                </div>
                             </div>
                         </div>
                     </div>
@@ -93,45 +111,42 @@
         crossorigin="anonymous"
     ></script>
 
-<script src="/static/js/axios.js"></script>
-<script src="/static/js/vue.js"></script>
-<script>
-    const app = Vue.createApp({
-        data() {
-            return {
-                baseURL: '',
-                alldata: [],
-            };
-        },
-        methods: {
-            
-            getAllData: async function () {
-                try {
-                    const get_url = this.baseURL + '/api/data/mydata';
-                    const response = await axios.get(get_url);
-                    console.log(response.data)
-                    if(response.data.data && response.data.success === 1 ) {
-                        console.log(response.data.data)
-                        this.alldata = response.data.data
-                    }
-                } catch (err) {
-                    console.log(err);
-                    if (err?.response?.data?.errorMsg) {
-                        this.error += err.response.data.errorMsg;
-                        
-                    } else {
-                        this.error += 'Error, Please try again after some time';
+    <script src="/static/js/axios.js"></script>
+    <script src="/static/js/vue.js"></script>
+    <script>
+        const app = Vue.createApp({
+            data() {
+                return {
+                    baseURL: '',
+                    alldata: []
+                };
+            },
+            methods: {
+                getAllData: async function () {
+                    try {
+                        const get_url = this.baseURL + '/api/data/mydata';
+                        const response = await axios.get(get_url);
+                        console.log(response.data);
+                        if (response.data.data && response.data.success === 1) {
+                            console.log(response.data.data);
+                            this.alldata = response.data.data;
+                        }
+                    } catch (err) {
+                        console.log(err);
+                        if (err?.response?.data?.errorMsg) {
+                            this.error += err.response.data.errorMsg;
+                        } else {
+                            this.error += 'Error, Please try again after some time';
+                        }
                     }
                 }
             },
-            
-        },
-        mounted: async function () {
-            this.baseURL = window.location.protocol +'//'+window.location.host;
-            console.log(this.baseURL)
-            await this.getAllData()
-        }
-    });
-    app.mount('#app');
-</script>
+            mounted: async function () {
+                this.baseURL = window.location.protocol + '//' + window.location.host;
+                console.log(this.baseURL);
+                await this.getAllData();
+            }
+        });
+        app.mount('#app');
+    </script>
 </html>

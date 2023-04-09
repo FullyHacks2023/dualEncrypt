@@ -35,7 +35,9 @@
                     <div class="collapse navbar-collapse" id="navbarSupportedContent">
                         <ul class="navbar-nav me-auto mb-2 mb-lg-0">
                             <li class="nav-item">
-                                <a class="nav-link" v-bind:href="baseURL+'/dashboard/newdata' ">Add New</a>
+                                <a class="nav-link" v-bind:href="baseURL+'/dashboard/newdata' "
+                                    >Add New</a
+                                >
                             </li>
                         </ul>
 
@@ -74,42 +76,42 @@
             <div class="container-fluid">
                 <div class="new-content container mt-5">
                     <form @submit.prevent="uploadData">
-                      <div class="mb-3">
-                        <label for="exampleFormControlInput1" class="form-label">Title</label>
-                        <input
-                          type="text"
-                          class="form-control"
-                          id="exampleFormControlInput1"
-                          placeholder="Title"
-                          v-model="heading"
-                        />
-                      </div>
-                      <div class="mb-3">
-                        <label for="exampleFormControlTextarea11" class="form-label"
-                          >Notes</label
-                        >
-                        <textarea
-                          class="form-control"
-                          id="exampleFormControlTextarea11"
-                          rows="3"
-                          v-model="data"
-                        ></textarea>
-                      </div>
-                      <div class="mb-3">
-                        <label for="exampleFormControlInput111" class="form-label"
-                          >Password</label
-                        >
-                        <input
-                          type="password"
-                          class="form-control"
-                          id="exampleFormControlInput111"
-                          placeholder="Password"
-                          v-model="password"
-                        />
-                      </div>
-                      <button type="submit" class="btn btn-primary mt-4">Add Notes</button>
+                        <div class="mb-3">
+                            <label for="exampleFormControlInput1" class="form-label">Title</label>
+                            <input
+                                type="text"
+                                class="form-control"
+                                id="exampleFormControlInput1"
+                                placeholder="Title"
+                                v-model="heading"
+                            />
+                        </div>
+                        <div class="mb-3">
+                            <label for="exampleFormControlTextarea11" class="form-label"
+                                >Notes</label
+                            >
+                            <textarea
+                                class="form-control"
+                                id="exampleFormControlTextarea11"
+                                rows="3"
+                                v-model="data"
+                            ></textarea>
+                        </div>
+                        <div class="mb-3">
+                            <label for="exampleFormControlInput111" class="form-label"
+                                >Password</label
+                            >
+                            <input
+                                type="password"
+                                class="form-control"
+                                id="exampleFormControlInput111"
+                                placeholder="Password"
+                                v-model="password"
+                            />
+                        </div>
+                        <button type="submit" class="btn btn-primary mt-4">Add Notes</button>
                     </form>
-                  </div>
+                </div>
             </div>
         </div>
     </body>
@@ -120,64 +122,68 @@
         crossorigin="anonymous"
     ></script>
 
-<script src="/static/js/axios.js"></script>
-<script src="/static/js/vue.js"></script>
-<script src="/static/js/crypto-js.min.js"></script>
-<script>
-    const app = Vue.createApp({
-        data() {
-            return {
-                baseURL: '',
-                heading: '',
-                data: '',
-                password: '',
-                encryptdata : '',
-            };
-        },
-        methods: {
-            
-            uploadData: async function () {
-                try {
-                    console.log(this.heading)
-                    console.log(this.data)
-                    console.log(this.password)
-                    if(this.heading && this.data && this.password) {
-                        this.encryptdata = CryptoJS.AES.encrypt(this.data, this.password).toString();
-                        console.log(this.encryptdata);
-                        const post_url = this.baseURL + '/api/data/mydata';
-                        const postData = {
-                            heading: this.heading,
-                            encryptdata: this.encryptdata
-                        };
-                        const response = await axios.post(post_url, postData);
-                        console.log(response.data) 
-                    }
-                    
-                    
-                } catch (err) {
-                    console.log(err);
-                    if (err?.response?.data?.errorMsg) {
-                        this.error += err.response.data.errorMsg;
-                        
-                    } else {
-                        this.error += 'Error, Please try again after some time';
+    <script src="/static/js/axios.js"></script>
+    <script src="/static/js/vue.js"></script>
+    <script src="/static/js/crypto-js.min.js"></script>
+    <script>
+        const app = Vue.createApp({
+            data() {
+                return {
+                    baseURL: '',
+                    heading: '',
+                    data: '',
+                    password: '',
+                    encryptdata: ''
+                };
+            },
+            methods: {
+                uploadData: async function () {
+                    try {
+                        console.log(this.heading);
+                        console.log(this.data);
+                        console.log(this.password);
+                        if (this.heading && this.data && this.password) {
+                            this.encryptdata = CryptoJS.AES.encrypt(
+                                this.data,
+                                this.password
+                            ).toString();
+                            console.log(this.encryptdata);
+                            const post_url = this.baseURL + '/api/data/mydata';
+                            const postData = {
+                                heading: this.heading,
+                                encryptdata: this.encryptdata
+                            };
+                            const response = await axios.post(post_url, postData);
+                            console.log(response.data);
+                            if (response.data?.id && response.data?.encryptdata) {
+                                this.login_success = true;
+                                setTimeout(() => {
+                                    window.location.href = this.baseURL + '/dashboard/checkdata/'+response.data.id;
+                                }, 500);
+                            }
+                        }
+                    } catch (err) {
+                        console.log(err);
+                        if (err?.response?.data?.errorMsg) {
+                            this.error += err.response.data.errorMsg;
+                        } else {
+                            this.error += 'Error, Please try again after some time';
+                        }
                     }
                 }
             },
-            
-        },
-        mounted: function () {
-            this.baseURL = window.location.protocol +'//'+window.location.host;
-            console.log(this.baseURL)
-            // var ciphertext = CryptoJS.AES.encrypt('my message', 'secret key 123').toString();
-            // console.log(ciphertext);
+            mounted: function () {
+                this.baseURL = window.location.protocol + '//' + window.location.host;
+                console.log(this.baseURL);
+                // var ciphertext = CryptoJS.AES.encrypt('my message', 'secret key 123').toString();
+                // console.log(ciphertext);
 
-            // // Decrypt
-            // var bytes = CryptoJS.AES.decrypt(ciphertext, 'secret key 123');
-            // var originalText = bytes.toString(CryptoJS.enc.Utf8);
-            // console.log(originalText);
-        }
-    });
-    app.mount('#app');
-</script>
+                // // Decrypt
+                // var bytes = CryptoJS.AES.decrypt(ciphertext, 'secret key 123');
+                // var originalText = bytes.toString(CryptoJS.enc.Utf8);
+                // console.log(originalText);
+            }
+        });
+        app.mount('#app');
+    </script>
 </html>

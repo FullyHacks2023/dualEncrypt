@@ -7,6 +7,7 @@ const AES256 = require('../helpers/aes256');
 
 router.get('/mydata', async (req, res) => {
     try {
+        console.log(req.session);
         const dataDetails = await EncryptData.getAllHeaderId(req.session.userid);
         console.log(dataDetails);
         res.send({ data: dataDetails, success: 1 });

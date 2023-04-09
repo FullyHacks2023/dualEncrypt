@@ -6,6 +6,8 @@ const path = require('path');
 const session = require('express-session');
 const cors = require('cors');
 
+const { sessionMiddleware, sessionMiddlewareTemplate } = require('./middleware/session');
+
 const app = express();
 app.use(cors());
 app.use(express.json());
@@ -33,7 +35,7 @@ app.use(
         secret: process.env.SESSION_SECRET,
         resave: false,
         saveUninitialized: true,
-        cookie: { secure: true, maxAge: 60000 }
+        cookie: { secure: true, maxAge: 600000 }
     })
 );
 app.get('/', async (req, res) => {
@@ -53,12 +55,12 @@ app.use('/auth', require('./routes/auth_template_routes'));
 // dashbaord templates
 // ===============================================================
 
-app.use('/dashboard', require('./routes/dashboard_template_routes'));
+app.use('/dashboard', sessionMiddlewareTemplate, require('./routes/dashboard_template_routes'));
 // ========================== APIs =======================
 // setting APIs
 // ===============================================================
 app.use('/api/auth', require('./routes/auth_api'));
-app.use('/api/data', require('./routes/data_api'));
+app.use('/api/data', sessionMiddleware, require('./routes/data_api'));
 
 // ========================== Server setup =======================
 // setting up server according to port
