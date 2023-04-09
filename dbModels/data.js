@@ -13,6 +13,10 @@ const Data = sequelize.define(
             type: DataTypes.TEXT,
             allowNull: true
         },
+        hint: {
+            type: DataTypes.TEXT,
+            allowNull: true
+        },
         userId: {
             type: DataTypes.INTEGER,
             references: {
@@ -44,7 +48,8 @@ const createData = async (data) => {
         const dataDB = {
             heading: data.heading,
             encryptdata: data.encryptdata,
-            userId: data.userid
+            userId: data.userid,
+            hint: data.hint
         };
 
         const encyData = await Data.create(dataDB);
@@ -91,9 +96,9 @@ const findDataById = async (id, userId) => {
     }
 };
 
-const deleteDataById = async (id) => {
+const deleteDataById = async (id, userId) => {
     try {
-        const dataDetails = await Data.destroy({ where: { id } });
+        const dataDetails = await Data.destroy({ where: { id, userId } });
         console.log('deleted data id ', dataDetails);
         return true;
     } catch (error) {
@@ -112,6 +117,7 @@ const updateData = async (data, userId) => {
         }
         dataDetails.heading = data.heading;
         dataDetails.encryptdata = data.encryptdata;
+        dataDetails.hint = data.hint;
         await dataDetails.save();
         const encryptData = dataDetails.toJSON();
         return modifyDataMiddleware(encryptData);

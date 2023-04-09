@@ -35,12 +35,12 @@ app.use(
         secret: process.env.SESSION_SECRET,
         resave: false,
         saveUninitialized: true,
-        cookie: { secure: true, maxAge: 600000 }
+        cookie: { secure: true, maxAge: 3600000 }
     })
 );
 app.get('/', async (req, res) => {
     if (req.session.userid) {
-        console.log(req.session.userid);
+        // console.log(req.session.userid);
         res.redirect('/dashboard');
     } else {
         res.redirect('/auth');

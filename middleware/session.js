@@ -1,5 +1,4 @@
 function sessionMiddleware(req, res, next) {
-    console.log(req.session);
     if (req.session.userid) {
         next();
     } else {
@@ -7,7 +6,6 @@ function sessionMiddleware(req, res, next) {
     }
 }
 function sessionMiddlewareTemplate(req, res, next) {
-    console.log(req.session);
     if (req.session.userid) {
         next();
     } else {

@@ -26,6 +26,7 @@ router.get('/mydata/:id', async (req, res) => {
         const dataDetails = await EncryptData.findDataById(id, req.session.userid);
         if (dataDetails.encryptdata) {
             dataDetails.encryptdata = AES256.decryptData(dataDetails.encryptdata);
+            dataDetails.hint = dataDetails.hint ? AES256.decryptData(dataDetails.hint) : '';
         }
         res.send({ data: { ...dataDetails }, success: 1 });
     }
@@ -39,10 +40,12 @@ router.post('/mydata', async (req, res) => {
             res.status(406).send(validationerror);
         } else {
             const backendEnc = AES256.encryptData(req.body.encryptdata);
+            const hint = req.body.hint ? AES256.encryptData(req.body.hint) : '';
             const dataDB = {
                 heading: req.body.heading,
                 encryptdata: backendEnc,
-                userid: req.session.userid
+                userid: req.session.userid,
+                hint
             };
             const dataDetails = await EncryptData.createData(dataDB);
             res.send(dataDetails);
@@ -60,7 +63,13 @@ router.put('/mydata', async (req, res) => {
             res.status(406).send(validationerror);
         } else {
             const backendEnc = AES256.encryptData(req.body.encryptdata);
-            const dataDB = { id: req.body.id, heading: req.body.heading, encryptdata: backendEnc };
+            const hint = req.body.hint ? AES256.encryptData(req.body.hint) : '';
+            const dataDB = {
+                id: req.body.id,
+                heading: req.body.heading,
+                encryptdata: backendEnc,
+                hint
+            };
             const dataDetails = await EncryptData.updateData(dataDB);
             res.send(dataDetails);
         }

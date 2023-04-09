@@ -15,12 +15,23 @@
             rel="stylesheet"
             href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.4/font/bootstrap-icons.css"
         />
+        <link rel="preconnect" href="https://fonts.googleapis.com" />
+        <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+        <link
+            href="https://fonts.googleapis.com/css2?family=Iceberg&family=Open+Sans:wght@400;500;600&family=Titillium+Web:wght@200;400;700&display=swap"
+            rel="stylesheet"
+        />
     </head>
     <body>
         <div id="app">
-            <nav class="navbar navbar-expand-lg navbar-light bg-light">
-                <div class="container-fluid">
-                    <a class="navbar-brand" href="#">Dashboard</a>
+            <nav class="navbar navbar-expand-lg navbar-light" style="background-color: #1d1b31">
+                <div class="container-fluid px-5">
+                    <a
+                        class="navbar-brand text-light"
+                        href="/"
+                        style="font-family: Iceberg; font-size: 25px"
+                        >DevSec</a
+                    >
                     <button
                         class="navbar-toggler"
                         type="button"
@@ -35,7 +46,9 @@
                     <div class="collapse navbar-collapse" id="navbarSupportedContent">
                         <ul class="navbar-nav me-auto mb-2 mb-lg-0">
                             <li class="nav-item">
-                                <a class="nav-link" v-bind:href="baseURL+'/dashboard/newdata' "
+                                <a
+                                    class="nav-link text-light"
+                                    v-bind:href="baseURL+'/dashboard/newdata' "
                                     >Add New</a
                                 >
                             </li>
@@ -45,7 +58,7 @@
                             <ul class="navbar-nav me-auto mb-2 mb-lg-0">
                                 <li class="nav-item dropdown">
                                     <a
-                                        class="nav-link dropdown-toggle"
+                                        class="nav-link dropdown-toggle text-light"
                                         href="#"
                                         id="navbarDropdownMenuLink"
                                         role="button"
@@ -73,15 +86,21 @@
                     </div>
                 </div>
             </nav>
-            <div class="container-fluid">
+
+            <div class="container">
                 <div v-if="alldata.length > 0">
                     <div class="card my-4" v-for="item in alldata">
-                        <div class="card-body">
+                        <div class="card-body p-2">
                             <div class="d-flex justify-content-between">
-                                <div class="">{{ item.heading }}</div>
+                                <div class="ms-2" style="font-size: 18px; margin-top: 5px">
+                                    {{ item.heading }}
+                                </div>
                                 <div class="me-3">
                                     <a v-bind:href="baseURL+'/dashboard/checkdata/'+item.id ">
-                                        <i class="bi bi-arrow-right-circle-fill"></i>
+                                        <i
+                                            class="bi bi-arrow-right-circle-fill"
+                                            style="font-size: 25px"
+                                        ></i>
                                     </a>
                                 </div>
                             </div>

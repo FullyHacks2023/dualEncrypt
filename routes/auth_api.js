@@ -32,7 +32,7 @@ router.post('/login', async (req, res) => {
             res.status(401).send(validationerror);
         } else {
             const user = await checkUserEmailPass(req.body);
-            console.log(user);
+            // console.log(user);
             if (user.errorMsg) {
                 res.status(500).send(user);
             } else if (user.invalidMsg) {
