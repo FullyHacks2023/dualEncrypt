@@ -12,6 +12,13 @@ const Data = sequelize.define(
         encryptdata: {
             type: DataTypes.TEXT,
             allowNull: true
+        },
+        userId: {
+            type: DataTypes.INTEGER,
+            references: {
+                model: 'User', // 'User' refers to table name
+                key: 'id' // 'id' refers to column name in fathers table
+            }
         }
     },
     {
@@ -36,7 +43,8 @@ const createData = async (data) => {
     try {
         const dataDB = {
             heading: data.heading,
-            encryptdata: data.encryptdata
+            encryptdata: data.encryptdata,
+            userId: data.userid
         };
 
         const encyData = await Data.create(dataDB);
@@ -48,10 +56,13 @@ const createData = async (data) => {
     }
 };
 
-const getAllHeaderId = async () => {
+const getAllHeaderId = async (userId) => {
     try {
         const AllData = await Data.findAll({
-            attributes: ['id', 'heading']
+            attributes: ['id', 'heading'],
+            where: {
+                userId
+            }
         });
         const retuenData = [];
         AllData.forEach((data) => {
@@ -64,11 +75,14 @@ const getAllHeaderId = async () => {
     }
 };
 
-const findDataById = async (id) => {
+const findDataById = async (id, userId) => {
     try {
         const dataDetails = await Data.findByPk(id);
         if (!dataDetails) {
             return { errorMsg: 'validation error' };
+        }
+        if (dataDetails.userId !== userId) {
+            return { errorMsg: 'invalid data error' };
         }
         const encryptData = dataDetails.toJSON();
         return modifyDataMiddleware(encryptData);
@@ -80,18 +94,21 @@ const findDataById = async (id) => {
 const deleteDataById = async (id) => {
     try {
         const dataDetails = await Data.destroy({ where: { id } });
-        console.log(dataDetails);
+        console.log('deleted data id ', dataDetails);
         return true;
     } catch (error) {
         throw new Error(error.message);
     }
 };
 
-const updateData = async (data) => {
+const updateData = async (data, userId) => {
     try {
         const dataDetails = await Data.findByPk(data.id);
         if (!dataDetails) {
             return { errorMsg: 'data not available ' };
+        }
+        if (dataDetails.userId !== userId) {
+            return { errorMsg: 'invalid data error' };
         }
         dataDetails.heading = data.heading;
         dataDetails.encryptdata = data.encryptdata;

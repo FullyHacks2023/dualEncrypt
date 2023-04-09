@@ -7,7 +7,7 @@ const AES256 = require('../helpers/aes256');
 
 router.get('/mydata', async (req, res) => {
     try {
-        const dataDetails = await EncryptData.getAllHeaderId();
+        const dataDetails = await EncryptData.getAllHeaderId(req.session.userid);
         console.log(dataDetails);
         res.send({ data: dataDetails, success: 1 });
     } catch (err) {
@@ -22,7 +22,7 @@ router.get('/mydata/:id', async (req, res) => {
     if (!validationerror) {
         res.status(406).send(validationerror);
     } else {
-        const dataDetails = await EncryptData.findDataById(id);
+        const dataDetails = await EncryptData.findDataById(id, req.session.userid);
         if (dataDetails.encryptdata) {
             dataDetails.encryptdata = AES256.decryptData(dataDetails.encryptdata);
         }
@@ -38,7 +38,11 @@ router.post('/mydata', async (req, res) => {
             res.status(406).send(validationerror);
         } else {
             const backendEnc = AES256.encryptData(req.body.encryptdata);
-            const dataDB = { heading: req.body.heading, encryptdata: backendEnc };
+            const dataDB = {
+                heading: req.body.heading,
+                encryptdata: backendEnc,
+                userid: req.session.userid
+            };
             const dataDetails = await EncryptData.createData(dataDB);
             res.send(dataDetails);
         }
@@ -50,7 +54,7 @@ router.post('/mydata', async (req, res) => {
 
 router.put('/mydata', async (req, res) => {
     try {
-        const validationerror = validationError.updateData(req.body);
+        const validationerror = validationError.updateData(req.body, req.session.userid);
         if (validationerror) {
             res.status(406).send(validationerror);
         } else {
@@ -71,7 +75,7 @@ router.delete('/mydata/:id', async (req, res) => {
         if (!validationerror) {
             res.status(406).send(validationerror);
         } else {
-            const deleteStatus = await EncryptData.deleteDataById(id);
+            const deleteStatus = await EncryptData.deleteDataById(id, req.session.userid);
             res.send({ deleteStatus });
         }
     } catch (err) {
