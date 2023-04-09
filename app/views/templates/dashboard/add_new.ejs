@@ -1,0 +1,251 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="UTF-8" />
+        <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+        <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+        <title>Document</title>
+        <link
+            href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha3/dist/css/bootstrap.min.css"
+            rel="stylesheet"
+            integrity="sha384-KK94CHFLLe+nY2dmCWGMq91rCGa5gtU4mk92HdvYe+M/SXH301p5ILy+dN9+nJOZ"
+            crossorigin="anonymous"
+        />
+        <link
+            rel="stylesheet"
+            href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.4/font/bootstrap-icons.css"
+        />
+        <link rel="preconnect" href="https://fonts.googleapis.com" />
+        <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+        <link
+            href="https://fonts.googleapis.com/css2?family=Iceberg&family=Open+Sans:wght@400;500;600&family=Titillium+Web:wght@200;400;700&display=swap"
+            rel="stylesheet"
+        />
+    </head>
+    <body>
+        <div id="app">
+            <nav class="navbar navbar-expand-lg navbar-light" style="background-color: #1d1b31">
+                <div class="container-fluid px-5">
+                    <a
+                        class="navbar-brand text-light"
+                        href="/"
+                        style="font-family: Iceberg; font-size: 25px"
+                        >DevSec</a
+                    >
+                    <button
+                        class="navbar-toggler"
+                        type="button"
+                        data-bs-toggle="collapse"
+                        data-bs-target="#navbarSupportedContent"
+                        aria-controls="navbarSupportedContent"
+                        aria-expanded="false"
+                        aria-label="Toggle navigation"
+                    >
+                        <span class="navbar-toggler-icon"></span>
+                    </button>
+                    <div class="collapse navbar-collapse" id="navbarSupportedContent">
+                        <ul class="navbar-nav me-auto mb-2 mb-lg-0">
+                            <li class="nav-item" style="margin-left: 70px;">
+                                <a
+                                    class="nav-link text-light"
+                                    v-bind:href="baseURL+'/dashboard/newdata' "
+                                    >Add New</a
+                                >
+                            </li>
+                        </ul>
+
+                        <div class="d-flex">
+                            <ul class="navbar-nav me-auto mb-2 mb-lg-0">
+                                <li class="nav-item dropdown">
+                                    <a
+                                        class="nav-link dropdown-toggle text-light"
+                                        href="#"
+                                        id="navbarDropdownMenuLink"
+                                        role="button"
+                                        data-bs-toggle="dropdown"
+                                        aria-expanded="false"
+                                    >
+                                        Account
+                                    </a>
+                                    <ul
+                                        class="dropdown-menu"
+                                        aria-labelledby="navbarDropdownMenuLink"
+                                        style="right: 0 !important; left: auto !important"
+                                    >
+                                        <li>
+                                            <a
+                                                class="dropdown-item"
+                                                v-bind:href="baseURL+'/api/auth/logout' "
+                                                >Logout</a
+                                            >
+                                        </li>
+                                    </ul>
+                                </li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+            </nav>
+
+            <div class="modal" tabindex="-1" id="exampleModal">
+                <div class="modal-dialog">
+                  <div class="modal-content">
+                    <div class="modal-header">
+                      <h5 class="modal-title">Data saved successfully</h5>
+                      <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                    </div>
+                    <div class="modal-body">
+                      <p>click on check button to view the recent saved data .</p>
+                    </div>
+                    <div class="modal-footer">
+                      <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                      
+                      <button type="button" class="btn btn-primary" @click="redirectToUpdate">Check</button>
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+            <div class="container-fluid">
+                <div class="new-content container mt-5">
+                    <form @submit.prevent="uploadData">
+                        <div class="mb-3">
+                            <label for="exampleFormControlInput1" class="form-label">Title</label>
+                            <input
+                                type="text"
+                                class="form-control"
+                                id="exampleFormControlInput1"
+                                placeholder="Title"
+                                v-model="heading"
+                            />
+                        </div>
+                        <div class="mb-3">
+                            <label for="exampleFormControlTextarea11" class="form-label"
+                                >Notes</label
+                            >
+                            <textarea
+                                class="form-control"
+                                id="exampleFormControlTextarea11"
+                                rows="5"
+                                v-model="data"
+                            ></textarea>
+                        </div>
+                        <label for="exampleFormControlInput1" class="form-label">Pass code</label>
+                        <div class="input-group mb-3">
+                            <!-- show hide passwor  -->
+                            <input
+                                :type="passVisible ? 'text' : 'password' "
+                                class="form-control"
+                                placeholder="Encryption Password"
+                                aria-label="Password"
+                                aria-describedby="button-addon2"
+                                id="password"
+                                v-model="password"
+                            />
+                            <button
+                                class="btn btn-outline-secondary"
+                                type="button"
+                                @click="togglePass"
+                            >
+                                <i class="bi bi-eye" id="togglePassword" v-if="passVisible"></i>
+                                <i class="bi bi-eye-slash" id="togglePassword" v-else></i>
+                            </button>
+                        </div>
+                        <div class="mb-3">
+                            <label for="exampleFormControlInput1" class="form-label">Hint</label>
+                            <input
+                                type="text"
+                                class="form-control"
+                                id="exampleFormControlInput1"
+                                placeholder="Hint for your passcode"
+                                v-model="hint"
+                            />
+                        </div>
+                        <button type="submit" class="btn btn-primary mt-4 border-0" style="background-color: #1d1b31">Add Notes</button>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </body>
+
+    <script
+        src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha3/dist/js/bootstrap.bundle.min.js"
+        integrity="sha384-ENjdO4Dr2bkBIFxQpeoTz1HIcje39Wm4jDKdf19U8gI4ddQ3GYNS7NTKfAdVQSZe"
+        crossorigin="anonymous"
+    ></script>
+
+    <script src="/static/js/axios.js"></script>
+    <script src="/static/js/vue.js"></script>
+    <script src="/static/js/crypto-js.min.js"></script>
+    <script>
+        const app = Vue.createApp({
+            data() {
+                return {
+                    baseURL: '',
+                    heading: '',
+                    data: '',
+                    password: '',
+                    hint: '',
+                    encryptdata: '',
+                    passVisible: false,
+                    newDataId: null
+                };
+            },
+            methods: {
+                redirectToUpdate: function(){
+                    window.location.href = this.baseURL + '/dashboard/checkdata/'+this.newDataId;
+                },
+                togglePass: function(){
+                    this.passVisible = !this.passVisible
+                },
+                uploadData: async function () {
+                    try {
+                        if (this.heading && this.data && this.password) {
+                            this.encryptdata = CryptoJS.AES.encrypt(
+                                this.data,
+                                this.password,
+                            ).toString();
+                            // console.log(this.encryptdata);
+                            const post_url = this.baseURL + '/api/data/mydata';
+                            const postData = {
+                                heading: this.heading,
+                                encryptdata: this.encryptdata,
+                                hint: this.hint,
+                            };
+                            const response = await axios.post(post_url, postData);
+                            // console.log(response.data);
+                            if (response.data?.id && response.data?.encryptdata) {
+                                this.newDataId = response.data.id;
+                                this.heading= '';
+                                this.data= '';
+                                this.password= '';
+                                this.encryptdata= '';
+                                const myModal = new bootstrap.Modal(document.getElementById('exampleModal'))
+                                myModal.show()
+                            }
+                        }
+                    } catch (err) {
+                        console.log(err);
+                        if (err?.response?.data?.errorMsg) {
+                            this.error += err.response.data.errorMsg;
+                        } else {
+                            this.error += 'Error, Please try again after some time';
+                        }
+                    }
+                }
+            },
+            mounted: function () {
+                this.baseURL = window.location.protocol + '//' + window.location.host;
+                // console.log(this.baseURL);
+                // var ciphertext = CryptoJS.AES.encrypt('my message', 'secret key 123').toString();
+                // console.log(ciphertext);
+
+                // // Decrypt
+                // var bytes = CryptoJS.AES.decrypt(ciphertext, 'secret key 123');
+                // var originalText = bytes.toString(CryptoJS.enc.Utf8);
+                // console.log(originalText);
+            }
+        });
+        app.mount('#app');
+    </script>
+</html>
